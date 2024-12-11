@@ -61,7 +61,7 @@ class Product(models.Model):
     description = models.TextField()
     category = models.CharField(choices=category_choices, max_length=3)
     count = models.IntegerField()
-    rating = models.FloatField()
+    rating = models.FloatField(blank=True, null=True)
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
     price = models.FloatField()
 

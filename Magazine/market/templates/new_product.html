@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Добавление товара{% endblock %}
+
+{% block content %}
+
+<form method="post">
+    <h1>Новый товар</h1>
+    <table>
+        {% csrf_token %}
+        {{form.as_table}}
+        {{form_img.as_table}} 
+    </table>
+    <br>
+    <button type="submit">Опубликовать</button>
+</form>
+
+{% endblock %}

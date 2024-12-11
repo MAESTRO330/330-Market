@@ -2,13 +2,32 @@ from django import forms
 from django.forms import widgets
 from .models import User, Product, ProductImage
 
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            result = [single_file_clean(data, initial)]
+        return result
+
 class ProductForm(forms.Form):
-    class Meta:
-        model = Product
-        fields = '__all__'
+    title = forms.CharField(label='Название')
+    description = forms.CharField(widget=forms.Textarea, label='Описание')
+    category = forms.ChoiceField(choices=Product.category_choices, label='Категория')
+    count = forms.IntegerField(label='Количество')
+    price = forms.FloatField(label='Цена')
 
 class ProductImageForm(forms.Form):
-    photos = forms.FileField(widget=widgets.FileInput(attrs={'multiple': True}))
+    photos = MultipleFileField()
 
     def clean_photos(self):
         # Остаются только картинки
